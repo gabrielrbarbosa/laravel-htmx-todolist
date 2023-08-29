@@ -14,6 +14,13 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://unpkg.com/htmx.org"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.body.addEventListener('htmx:configRequest', (evt) => {
+                    evt.detail.headers['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').content
+                })
+            });
+        </script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">

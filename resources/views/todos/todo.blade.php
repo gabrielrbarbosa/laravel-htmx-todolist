@@ -1,5 +1,5 @@
 @fragment("todo")
-    <li id="todo-{{ $todo->id }}" @class(['completed' => $todo->completed])>
+    <li id="todo-{{ $todo->id }}" class="mt-3">
         <input
             type="checkbox"
             class="toggle"
@@ -7,11 +7,14 @@
             @checked($todo->completed)
             hx-target="#todo-{{ $todo->id }}"
             hx-swap="outerHTML"
-            hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+            hx-indicator="#loading"
         />
-        {{ $todo->title }}
-        <button hx-delete="/todos/{{ $todo->id }}" hx-target="#todo-{{ $todo->id }}" hx-swap="outerHTML"
-                hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'>
+        <span class="{{ $todo->completed ? 'text-green-500 line-through' : 'text-white' }}">{{ $todo->title }}</span>
+        <button class="flex-no-shrink p-2 ml-2 border-2 rounded text-white"
+                hx-delete="/todos/{{ $todo->id }}"
+                hx-target="#todo-{{ $todo->id }}"
+                hx-swap="outerHTML"
+                hx-indicator="#loading">
             Delete
         </button>
     </li>

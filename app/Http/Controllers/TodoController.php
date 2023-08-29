@@ -9,14 +9,20 @@ class TodoController extends Controller
 {
     public function index()
     {
-        return view('todos.index', ['todos' => Todo::all()]);
+        return view('todos.index', [
+            'todos' => Todo::all(),
+            'counter' => Todo::where('completed', false)->count()
+        ]);
     }
 
     public function store(Request $request)
     {
         $request->validate(['title' => 'required|max:255']);
         $todo = Todo::create(['title' => $request->title, 'completed' => false]);
-        return HtmxResponse::addRenderedFragment( view('todos.todo', compact('todo'))->render());
+        $counter = Todo::where('completed', false)->count();
+
+        return HtmxResponse::addFragment('todos.todo', 'todo', compact('todo'))
+            ->addFragment('todos.index', 'todo-count', compact('counter'));
     }
 
     public function update($id)
@@ -24,13 +30,18 @@ class TodoController extends Controller
         $todo = Todo::findOrFail($id);
         $todo->completed = !$todo->completed;
         $todo->save();
-        return HtmxResponse::addRenderedFragment(view('todos.todo', compact('todo'))->render());
+        $counter = Todo::where('completed', false)->count();
+
+        return HtmxResponse::addFragment('todos.todo', 'todo', compact('todo'))
+            ->addFragment('todos.index', 'todo-count', compact('counter'));
     }
 
     public function destroy($id)
     {
         $todo = Todo::findOrFail($id);
         $todo->delete();
-        return response(' ', 200);
+        $counter = Todo::where('completed', false)->count();
+
+        return HtmxResponse::addFragment('todos.index', 'todo-count', compact('counter'));
     }
 }
